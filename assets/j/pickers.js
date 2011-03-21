@@ -29,9 +29,13 @@ var Pickers = {
 				$widget.hide().find('input').val('');
 				$control.html("add").attr({ "class" : "timing-add" });
 			} else {
+				range=["9:00 AM", "5:00 PM"];
 				$widget.show().siblings('em').remove();
 				$widget.find('input').each(function() {
-					$.timePicker($(this)).setTime(new Date("1970/01/01 "+$(this).val()));
+					the_time = $(this).val();
+					the_default_time = range.shift();
+					if(the_time == "") { the_time = the_default_time; } 
+					$.timePicker($(this),{show24Hours:false}).setTime(new Date("1970/01/01 "+the_time));
 				});
 				$control.html("remove").attr({ "class" : "timing-remove" });
 			}

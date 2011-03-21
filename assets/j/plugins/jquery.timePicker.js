@@ -29,7 +29,8 @@
   };
 
   $.timePicker = function (elm, settings) {
-    var e = $(elm)[0];
+    var e = $(elm)[0],
+        settings = $.extend({}, $.fn.timePicker.defaults, settings||{});;
     return e.timePicker || (e.timePicker = new jQuery._timePicker(e, settings));
   };
 
