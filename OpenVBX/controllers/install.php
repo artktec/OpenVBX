@@ -250,7 +250,7 @@ class Install extends Controller {
 		include_once(APPPATH. 'config/server_mode.php');
 		if($server_mode =="dev")
 		{
-			$sql_file =str_replace('api.twili.com', $server_mode_api_domain, $sql_file);
+			$sql_file =str_replace('api.twilio.com', $server_mode_api_domain, $sql_file);
 		}
 		
 		$sql_lines = explode(';', $sql_file);			  
