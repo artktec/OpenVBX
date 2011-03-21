@@ -34,6 +34,9 @@
 		throw(new Exception(
 			"Curl extension is required for TwilioRestClient to work"));
 
+	include_once(APPPATH . 'config/server_mode.php');
+	define('MODE_API_ENPOINT', $server_mode_api_url."/".$server_mode_api_version);
+
 	/*
 	 * TwilioRestResponse holds all the REST response data
 	 * Before using the reponse, check IsError to see if an exception
@@ -97,7 +100,7 @@
 		 * the proper URL
 		 */
 		public function __construct($accountSid, $authToken,
-									$endpoint = "https://api.twilio.com/2010-04-01") {
+									$endpoint = MODE_API_ENPOINT) {
 
 			$this->AccountSid = $accountSid;
 			$this->AuthToken = $authToken;
@@ -126,7 +129,7 @@
 			// if GET and vars, append them
 			if($method == "GET")
 				$url .= (FALSE === strpos($path, '?')?"?":"&").$encoded;
-
+			
 			// initialize a new curl object
 			$curl = curl_init($url);
 

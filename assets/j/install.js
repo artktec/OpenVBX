@@ -23,7 +23,11 @@ if(typeof(OpenVBX) == "undefined") {
 }
 
 
+$(document).ready(function(){
+
 OpenVBX.Installer = {
+	LAST_STEP : +$('.step:last').attr('id').replace(/^step-/, ''),
+	WIZARD_WIDTH : -700,
 	tabsDisabled: true,
 	ready : false,
 	currentStep : 1,
@@ -42,11 +46,11 @@ OpenVBX.Installer = {
 						$('#'+a+'-'+OpenVBX.Installer.currentStep).addClass('invalid');
 					}
 				} else {
-					if(OpenVBX.Installer.currentStep == 5) {
+					if(OpenVBX.Installer.currentStep == OpenVBX.Installer.LAST_STEP-1) {
 						OpenVBX.Installer.ready = true;
 					}
 					
-					afterValidation();
+					afterValidation(data);
 				}
 				return data.success;
 			},
@@ -69,7 +73,7 @@ OpenVBX.Installer = {
 			return false;
 
 		OpenVBX.Installer.prevStepLock = true;
-		if($('.steps').css('left').replace('px','') > -700)
+		if($('.steps').css('left').replace('px','') > OpenVBX.Installer.WIZARD_WIDTH)
 			return false;
 
 		$('.error').slideUp();
@@ -87,34 +91,41 @@ OpenVBX.Installer = {
 		if(OpenVBX.Installer.nextStepLock)
 			return false;
 
-		var afterValidation = function() {
+		var afterValidation = function(data) {
 			
 			OpenVBX.Installer.nextStepLock = true;
-			if($('.steps').css('left').replace('px','') <= -3500)
+			if($('.steps').css('left').replace('px','') <= OpenVBX.Installer.END_WIZARD_WIDTH)
 				return false;
 			
 			$('.error').slideUp();
 			OpenVBX.Installer.currentStep += 1;
-			if(OpenVBX.Installer.currentStep == 6 && OpenVBX.Installer.ready) {
+			
+			if(typeof(data.tplvars) != 'undefined' && typeof(data.tplvars.server) != 'undefined') { // then we should do some replacements
+				if(typeof(data.tplvars.server.mode) != 'undefined' && data.tplvars.server.mode == 'dev') {
+					$('.server_mode').html(data.tplvars.server.name)
+				}
+			}
+			
+			if(OpenVBX.Installer.currentStep == OpenVBX.Installer.LAST_STEP && OpenVBX.Installer.ready) {
 				OpenVBX.Installer.submit(e);
 			} else {
 				OpenVBX.Installer.gotoStep(OpenVBX.Installer.currentStep);
 			}
 
 		};
-
+		
 		OpenVBX.Installer.validate(afterValidation);
-
+		
 		return false;
 	},
 	setButtons : function() {
-		if($('.steps').css('left').replace('px','') > -700) {
+		if($('.steps').css('left').replace('px','') > OpenVBX.Installer.WIZARD_WIDTH) {
 			$('button.prev').attr('disabled', 'disabled');
 		} else {
 			$('button.prev').removeAttr('disabled');
 		}
 		
-		if($('.steps').css('left').replace('px','') <= -3500) {
+		if($('.steps').css('left').replace('px','') <= OpenVBX.Installer.END_WIZARD_WIDTH) {
 			$('button.next').attr('disabled', 'disabled');
 		} else {
 			$('button.next').removeAttr('disabled');
@@ -130,11 +141,11 @@ OpenVBX.Installer = {
 				$('button.next').show();
 				$('button.submit').hide();
 				break;
-			case 5:
+			case(OpenVBX.Installer.LAST_STEP -1):
 				$('button.next').hide();
 				$('button.submit').show();
 				break;
-			case 6:
+			case OpenVBX.Installer.LAST_STEP:
 				$('button').hide();
 				break;
 		}
@@ -143,7 +154,7 @@ OpenVBX.Installer = {
 		OpenVBX.Installer.prevStepLock = false;
 	},
 	gotoStep : function(step) {
-		var left = (step * -700) + 700;
+		var left = (step * OpenVBX.Installer.WIZARD_WIDTH) + (OpenVBX.Installer.WIZARD_WIDTH * -1); // the * -1 is to make it positive for the rollback.
 		$('.steps').animate({'left': left}, 'normal', 'swing', OpenVBX.Installer.setButtons);
 		OpenVBX.Installer.currentStep = step;
 	},
@@ -166,7 +177,7 @@ OpenVBX.Installer = {
 							.text(data.error)
 							.slideDown();
 					} else {
-						OpenVBX.Installer.gotoStep(6);
+						OpenVBX.Installer.gotoStep(OpenVBX.Installer.LAST_STEP);
 					}
 				},
 				type : 'post',
@@ -182,6 +193,7 @@ OpenVBX.Installer = {
 		return false;
 	}
 };
+OpenVBX.Installer.END_WIZARD_WIDTH = ((OpenVBX.Installer.LAST_STEP-1) * OpenVBX.Installer.WIZARD_WIDTH);
 
 $(document).ready(function() {
 	if($('.error').text() != '') {
@@ -238,5 +250,7 @@ $(document).ready(function() {
 		});
 	}, 1000);
 
+});
 
 });
+

@@ -40,21 +40,41 @@
 			</ul>
 
 			<div class="information">
-				<p><strong>Heads up&hellip;</strong> have your database credentials and <br />Twilio Account information handy.</p>
+				<p><strong>Heads up&hellip;</strong> have your database credentials and <br /><span class="server_mode">Twilio</span> Account information handy.</p>
 			</div>
 
 		</div>
 
 
-
-
 		<div id="step-2" class="step">
 			<a target="_blank" class="help" href="http://openvbx.org/install#step2" title="Get help at OpenVBX.org">Help</a>
-			<h1><span class="number">2.</span>Configure Database</h1>
+			<h1><span class="number">2.</span>Production or Development</h1>
+			<div class="step-desc">
+				<p>You can set up this server to be a production or development sever.</p>
+			</div>
+			<fieldset>
+					<input type="hidden" name="step" value="2" />
+				
+					<label for="iServerMode">Mode
+					<select id="iServerMode" class="medium" type="text" name="server_mode">
+						<option value="prod">Production</option>
+						<option value="dev">Development</option>
+					</select>
+			</fieldset>
+			<div class="information">
+				<p>You can change it later. In development you are going to be using Freewili.com</p>
+			</div>
+
+		</div>
+
+
+		<div id="step-3" class="step">
+			<a target="_blank" class="help" href="http://openvbx.org/install#step2" title="Get help at OpenVBX.org">Help</a>
+			<h1><span class="number">3.</span>Configure Database</h1>
 
 			<?php if(isset($pass) && $pass === true): ?>
 			<fieldset>
-					<input type="hidden" name="step" value="2" />
+					<input type="hidden" name="step" value="3" />
 				
 					<label for="iDatabaseHost">Hostname
 					<input id="iDatabaseHost" class="medium" type="text" name="database_host" value="<?php echo htmlspecialchars($hostname)?>" />
@@ -79,21 +99,20 @@
 
 
 
-
-		<div id="step-3" class="step">
+		<div id="step-4" class="step">
 			<a target="_blank" class="help" href="http://openvbx.org/install#step3" title="Get help at OpenVBX.org">Help</a>
-			<h1><span class="number">3.</span>Connect to Twilio</h1>
+			<h1><span class="number">4.</span>Connect to <span class="server_mode">Twilio</span></h1>
 
-			<p class="step-desc">Login to <a target="_blank" href="https://www.twilio.com/user/account/">your dashboard</a> for your Twilio SID and Token.</p>
+			<p class="step-desc">Login to <a target="_blank" href="https://www.twilio.com/user/account/">your dashboard</a> for your <span class="server_mode">Twilio</span> SID and Token.</p>
 
 			<fieldset>
-				<input type="hidden" name="step" value="3" />
+				<input type="hidden" name="step" value="4" />
 
-					<label for="iTwilioSID">Twilio SID
+					<label for="iTwilioSID"><span class="server_mode">Twilio</span> SID
 					<input id="iTwilioSID" class="medium" type="text" name="twilio_sid" value="<?php echo htmlspecialchars($twilio_sid)?>"  />
 					</label>
 
-					<label for="iTwilioToken">Twilio Token
+					<label for="iTwilioToken"><span class="server_mode">Twilio</span> Token
 					<input id="iTwilioToken" class="medium" type="password" name="twilio_token" value="<?php echo htmlspecialchars($twilio_token)?>" />
 					</label>
 			</fieldset>
@@ -103,13 +122,13 @@
 
 
 
-		<div id="step-4" class="step">
+		<div id="step-5" class="step">
 			<a target="_blank" class="help" href="http://openvbx.org/install#step4" title="Get help at OpenVBX.org">Help</a>
-			<h1><span class="number">4.</span>Options</h1>
+			<h1><span class="number">5.</span>Options</h1>
 			<p class="step-desc">OpenVBX can send messages and notifications through email. Enter an E-Mail Address that you want to show up as the From address when OpenVBX sends messages.</p>
 
 			<fieldset>
-				<input type="hidden" name="step" value="4" />
+				<input type="hidden" name="step" value="5" />
 
 
 					<label for="iFromEmail">Notifications will come from
@@ -125,14 +144,14 @@
 
 
 
-		<div id="step-5" class="step">
+		<div id="step-6" class="step">
 			<a target="_blank" class="help" href="http://openvbx.org/install#step5" title="Get help at OpenVBX.org">Help</a>
-			<h1><span class="number">5.</span>Your Account</h1>
+			<h1><span class="number">6.</span>Your Account</h1>
 
 			<p class="step-desc">You will use your account to login to OpenVBX once this installation is complete.</p>
 
 			<fieldset>
-				<input type="hidden" name="step" value="5" />
+				<input type="hidden" name="step" value="6" />
 
 					<label for="iAdminFirstName">First Name
 					<input id="iAdminFirstName" class="medium" type="text" name="admin_firstname" value="<?php echo htmlspecialchars($firstname)?>" />
@@ -161,7 +180,7 @@
 
 
 
-		<div id="step-6" class="step">
+		<div id="step-7" class="step">
 			<h1>Installation Complete!</h1>
 
 			<p class="step-desc">Thanks for choosing OpenVBX, enjoy.</p>
@@ -169,7 +188,7 @@
 			<a id="login-openvbx" href="<?php echo site_url() ?>">Login &raquo;</a>
 
 			<fieldset>
-				<input type="hidden" name="step" value="6" />
+				<input type="hidden" name="step" value="7" />
 			</fieldset>
 		</div>
 

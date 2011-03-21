@@ -46,6 +46,14 @@ class Install extends Controller {
 		$tplvars = array();
 		$tplvars['pass'] = true;
 		
+		$this->server['server'] = array();
+		$this->server['server']['mode'] = trim($this->input->post('server_mode'), 'na');
+		
+		if($this->server['server']['mode'] == "dev")
+		{
+			$this->server['server']['name'] = 'Freewili';
+		}
+		
 		$this->database['username'] = trim($this->input->post('database_user'));
 		$this->database['password'] = $this->input->post('database_password');
 		$this->database['hostname'] = trim($this->input->post('database_host') == ""?
@@ -78,6 +86,7 @@ class Install extends Controller {
 		$this->user['tenant_id'] = 1;
 		
 		$tplvars = array_merge($tplvars,
+							   $this->server,
 							   $this->user,
 							   $this->database,
 							   $this->openvbx,
@@ -189,7 +198,7 @@ class Install extends Controller {
 		$json['tests'] = $this->tests;
 		$json['pass'] = $this->pass;
 		$json['success'] = true;
-		$json['step'] = 6;
+		$json['step'] = 7;
 		
 		$database = $this->get_database_params($this->database);
 		$openvbx = $this->openvbx;
@@ -237,6 +246,13 @@ class Install extends Controller {
 		}
 
 		$sql_file = file_get_contents(APPPATH . '../openvbx.sql');
+		
+		include_once(APPPATH. 'config/server_mode.php');
+		if($server_mode =="dev")
+		{
+			$sql_file =str_replace('api.twili.com', $server_mode_api_domain, $sql_file);
+		}
+		
 		$sql_lines = explode(';', $sql_file);			  
 		foreach($sql_lines as $sql)
 		{
@@ -399,17 +415,68 @@ class Install extends Controller {
 			case 5:
 				$json = $this->validate_step5();
 				break;
+			case 6:
+				$json = $this->validate_step6();
+				break;
 				
 		}
-		
 		
 		$json['tplvars'] = $tplvars;
 		echo json_encode($json);
 	}
-
+	
 	function validate_step2()
 	{
 		$json = array('success' => true, 'step' => 2, 'message' => 'success');
+		$this->server['server']['mode'] = $this->input->post('server_mode');
+
+		try
+		{
+		
+			$server_mode = '<?php';
+			$server_mode .="\n\t";
+			$server_mode .='$server_mode_api_version="2010-04-01";';
+			$server_mode .="\n\t";
+				
+			// change things from Twilio to Freewili.
+			if($this->server['server']['mode'] == "prod")
+			{
+				$server_mode .='$server_mode_api_url="https://api.twilio.com";';
+				$server_mode .="\n\t";
+				$server_mode .='$server_mode_api_domain="api.twilio.com";';
+				$server_mode .="\n\t";
+				$server_mode .='$server_mode="prod";';
+				$server_mode .="\n\t";
+				$server_mode .='$server_mode_text="Twilio";';
+				
+			}
+			else
+			{
+				$server_mode .='$server_mode_api_url="https://api-freewili.appspot.com";';
+				$server_mode .="\n\t";
+				$server_mode .='$server_mode_api_domain="api-freewili.appspot.com";';
+				$server_mode .="\n\t";
+				$server_mode .='$server_mode="dev";';
+				$server_mode .="\n\t";
+				$server_mode .='$server_mode_text="Freewili";';
+			}
+			
+			file_put_contents(APPPATH . 'config/server_mode.php', $server_mode);
+		}
+		catch(Exception $e)
+		{
+			$json['success'] = false;
+			$json['message'] = $e->getMessage();
+			$json['step'] = $e->getCode();
+
+		}
+		
+		return $json;
+	}
+
+	function validate_step3()
+	{
+		$json = array('success' => true, 'step' => 3, 'message' => 'success');
 		
 		$database = $this->get_database_params($this->database);
 		
@@ -424,7 +491,7 @@ class Install extends Controller {
 										'username' => '',
 										'password' => '');
 				throw new InstallException( "Failed to connect to database: $error",
-											2 );
+											3 );
 			}
 
 			if(!mysql_select_db($database['default']['database'], $dbh))
@@ -432,7 +499,7 @@ class Install extends Controller {
 				$error = mysql_error($dbh);
 				$json['errors'] = array('database_name' => $error );
 				throw new InstallException( "Failed to access database: $error",
-											2);
+											3);
 			}
 
 		}
@@ -446,9 +513,9 @@ class Install extends Controller {
 		return $json;
 	}
 
-	function validate_step3()
+	function validate_step4()
 	{
-		$json = array('success' => true, 'step' => 2, 'message' => 'success');
+		$json = array('success' => true, 'step' => 4, 'message' => 'success');
 		$twilio_sid = $this->openvbx_settings['twilio_sid'];
 		$twilio_token = $this->openvbx_settings['twilio_token'];
 
@@ -484,7 +551,7 @@ class Install extends Controller {
 		return $json;
 	}
 
-	function validate_step4()
+	function validate_step5()
 	{
 		$json = array('success' => true, 'step' => 4, 'message' => 'success');
 		$this->openvbx_settings['from_email'] = trim($this->input->post('from_email'));
@@ -508,9 +575,9 @@ class Install extends Controller {
 		return $json;
 	}
 
-	function validate_step5()
+	function validate_step6()
 	{
-		$json = array('success' => true, 'step' => 2, 'message' => 'success');
+		$json = array('success' => true, 'step' => 5, 'message' => 'success');
 		
 		$this->user['email'] = $this->input->post('admin_email');
 		$this->user['password'] = $this->input->post('admin_pw');

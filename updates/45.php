@@ -3,6 +3,7 @@
 /* runUpdate_45() updates Twilio Account to 2010 */
 function runUpdate_45() {
 	  $ci = &get_instance();
+          include_once(APPPATH . 'config/server_mode.php');
 	  $tenants = $ci->db
 		   ->from('tenants')
 		   ->get()->result();
@@ -12,9 +13,7 @@ function runUpdate_45() {
 		  error_log("Updating to 2010: ". var_export($tenant, true));
 		  $twilio_sid = $ci->settings->get('twilio_sid', $tenant->id);
 		  $twilio_token = $ci->settings->get('twilio_token', $tenant->id);
-		  $twilio = new TwilioRestClient($twilio_sid,
-										 $twilio_token,
-										 'https://api.twilio.com/2010-04-01');
+		  $twilio = new TwilioRestClient($twilio_sid, $twilio_token)
 		  $response = $twilio->request("Accounts/{$twilio_sid}/IncomingPhoneNumbers");
 		  $numberUrls = array();
 		  if(isset($response->ResponseXml->IncomingPhoneNumbers->IncomingPhoneNumber))
