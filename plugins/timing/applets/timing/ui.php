@@ -25,16 +25,16 @@ $now = new DateTime('now', $tz);
 	<p><em>Your server's current time: <?php echo $now->format('r'); ?></em></p>
 
 	<div class="vbx-full-pane">
-<?php foreach ($days as $index => $day): ?>
+<?php foreach ($days as $index => $day): $_index = ($index==6)? 0 : $index+1; ?>
 		<div class="timing-timerange-wrap">
 			<label><?php print $day; ?></label>
 <?php
-			$state = AppletInstance::getValue("range_{$index}_from}", '') ? 'remove' : 'add';
+			$state = AppletInstance::getValue("range_{$_index}_from", '') ? 'remove' : 'add';
 			$default = $index < 5 ? '09:00AM' : '';
 			echo AppletUI::TimeRange(
-				"range_$index",
-				AppletInstance::getValue("range_{$index}_from", $default),
-				AppletInstance::getValue("range_{$index}_to", '05:00PM'),
+				"range_$_index",
+				AppletInstance::getValue("range_{$_index}_from", $default),
+				AppletInstance::getValue("range_{$_index}_to", '05:00PM'),
 				$day
 			);
 ?>

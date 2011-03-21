@@ -11,7 +11,7 @@ if (is_readable($ini)) {
 }
 if (empty($tz)) $tz = new DateTimeZone('America/Los_Angeles');
 $now = date_create('now', $tz); // TODO: get from config
-$today = date_format($now, 'w') - 1;
+$today = date_format($now, 'w');
 $response->addRedirect(AppletInstance::getDropZoneUrl(
   ($from = AppletInstance::getValue("range_{$today}_from"))
   && ($to = AppletInstance::getValue("range_{$today}_to"))

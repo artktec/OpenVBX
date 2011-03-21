@@ -30,9 +30,8 @@ var Pickers = {
 				$control.html("add").attr({ "class" : "timing-add" });
 			} else {
 				$widget.show().siblings('em').remove();
-				range = [new Date(0, 0, 0, 9, 0, 0), new Date(0, 0, 0, 17, 0, 0)];
 				$widget.find('input').each(function() {
-					$.timePicker($(this)).setTime(range.shift());
+					$.timePicker($(this)).setTime(new Date("1970/01/01 "+$(this).val()));
 				});
 				$control.html("remove").attr({ "class" : "timing-remove" });
 			}
