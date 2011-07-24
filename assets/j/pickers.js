@@ -32,10 +32,8 @@ var Pickers = {
 				range=["9:00 AM", "5:00 PM"];
 				$widget.show().siblings('em').remove();
 				$widget.find('input').each(function() {
-					the_time = $(this).val();
-					the_default_time = range.shift();
-					if(the_time == "") { the_time = the_default_time; } 
-					$.timePicker($(this),{show24Hours:false}).setTime(new Date("1970/01/01 "+the_time));
+					if(!$(this).val())
+						$.timePicker($(this)).setTime(range.shift());
 				});
 				$control.html("remove").attr({ "class" : "timing-remove" });
 			}
